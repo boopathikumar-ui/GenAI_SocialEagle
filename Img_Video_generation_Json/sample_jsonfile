@@ -1,0 +1,61 @@
+{
+  "SCALE": {
+    "Subject": [
+      "A Bharatanatyam dancer in an elegant classical pose, wearing a traditional Tamil Nadu dance costume and temple jewelry",
+      "A person carefully drawing an intricate traditional kolam at dawn",
+      "A Pongal celebration featuring a traditional clay Pongal pot, kolam, sugarcane, and festive decorations",
+      "The magnificent gopuram of Meenakshi Amman Temple representing Tamil architectural heritage",
+      "Traditional Tanjore painting artwork with rich ornamentation and gold-leaf-inspired details",
+      "Nadaswaram and thavil musicians performing traditional Tamil music",
+      "A skilled artisan weaving a Kanchipuram silk saree on a traditional handloom",
+      "Madras filter coffee served in a traditional stainless-steel davara and tumbler",
+      "Marina Beach at sunrise with its broad shoreline, gentle waves, and warm morning light"
+    ],
+    "Composition": [
+      "Create a cohesive visual collage where each cultural element has its own visual space while remaining part of one unified Tamil cultural narrative",
+      "Place the Bharatanatyam dancer as a prominent central or foreground subject",
+      "Position the kolam scene in the foreground or lower section, showing the intricate geometric patterns clearly",
+      "Place the Pongal celebration and decorated clay pot prominently alongside sugarcane and traditional festive details",
+      "Use the temple gopuram as a strong architectural element in the background",
+      "Include nadaswaram and thavil musicians naturally within a cultural performance setting",
+      "Show the Kanchipuram silk weaver close to the handloom, emphasizing craftsmanship and textile detail",
+      "Include the filter coffee as a subtle everyday cultural detail rather than a stereotypical centerpiece",
+      "Use Marina Beach and sunrise as a serene atmospheric background element",
+      "Maintain balanced visual hierarchy, realistic proportions, respectful representation, and clear separation between subjects"
+    ],
+    "Action": [
+      "The Bharatanatyam dancer is captured mid-pose with expressive but natural classical movement",
+      "A person is actively drawing a detailed kolam using rice flour during the early morning",
+      "Families are respectfully celebrating Pongal around a traditional clay pot with sugarcane and festive decorations",
+      "Nadaswaram and thavil musicians are performing together in a traditional musical setting",
+      "A Kanchipuram silk artisan is carefully operating the handloom and weaving silk fabric",
+      "Freshly prepared filter coffee is being poured between the tumbler and davara, showing the traditional serving method",
+      "The sunrise gradually illuminates Marina Beach and the shoreline",
+      "All actions should feel authentic, natural, and culturally respectful rather than staged or exaggerated"
+    ],
+    "Location": [
+      "Tamil Nadu, South India",
+      "A traditional Tamil household courtyard at dawn for the kolam scene",
+      "A festive Tamil Nadu home or village setting for the Pongal celebration",
+      "Meenakshi Amman Temple in Madurai for the temple architecture",
+      "A traditional artisan weaving environment in Kanchipuram for silk weaving",
+      "A culturally appropriate performance setting for nadaswaram and thavil musicians",
+      "A traditional South Indian home setting for Madras filter coffee",
+      "Marina Beach, Chennai, during sunrise",
+      "Use authentic Tamil Nadu architectural, textile, musical, culinary, and environmental details throughout"
+    ],
+    "Aesthetic": [
+      "Authentic and respectful Tamil cultural heritage",
+      "Elegant documentary-style visual storytelling combined with refined artistic presentation",
+      "Rich but natural South Indian colors, detailed traditional textiles, realistic skin tones, and authentic materials",
+      "Subtle influence of Tanjore painting aesthetics through ornamental richness, fine detailing, traditional motifs, and gold-leaf-inspired visual accents",
+      "Photorealistic rendering for people, architecture, weaving, food, and landscape while allowing selected elements to echo classical Tanjore painting artistry",
+      "Warm golden sunrise lighting and soft atmospheric depth",
+      "High-detail traditional jewelry, silk textures, handloom craftsmanship, kolam patterns, musical instruments, temple architecture, and Pongal decorations",
+      "Avoid caricatures, exoticization, exaggerated costumes, religious stereotypes, artificial poses, and generic 'Indian' imagery",
+      "Do not mix unrelated regional cultural symbols or clothing styles from other parts of India",
+      "Overall mood: dignified, warm, celebratory, artistic, authentic, and contemporary while honoring Tamil heritage"
+    ]
+  }
+}
+Create a video using above json prompt
