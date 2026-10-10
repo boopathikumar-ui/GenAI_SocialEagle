@@ -1,0 +1,7 @@
+# Normalize line endings: the repo is developed on Windows but built and run on Linux.
+* text=auto eol=lf
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.png binary
+*.ico binary
+*.woff2 binary

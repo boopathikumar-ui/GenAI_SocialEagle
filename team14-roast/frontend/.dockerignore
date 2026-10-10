@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+node_modules
+dist
+.cache
+.vite
+coverage
+.eslintcache
+*.tsbuildinfo
+tests
+__tests__
+.git

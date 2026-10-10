@@ -1,0 +1,76 @@
+# Production stack for a VPS that already runs Traefik (docker provider,
+# exposedbydefault=false, entrypoints web/websecure, cert resolver "letsencrypt").
+#
+# Images are built on the server from a Git repo, so the project needs:
+#   DOMAIN, GIT_REPO (e.g. github.com/owner/repo), GIT_REF (default main),
+#   GIT_SUBDIR (folder holding backend/ and frontend/, with a trailing slash, e.g. app/),
+#   SECRET_KEY, POSTGRES_PASSWORD, and (for roasts) OPENAI_API_KEY.
+# Public repo: leave GIT_AUTH empty. Private repo: GIT_AUTH=x-access-token:<read-only token>@
+# Nothing is published on the host: only Traefik reaches the containers.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-team14}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-team14_roast}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: https://${GIT_AUTH:-}${GIT_REPO:?set GIT_REPO}.git#${GIT_REF:-main}:${GIT_SUBDIR:-}backend
+    restart: unless-stopped
+    environment:
+      DEBUG: "false"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-team14}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-team14_roast}
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY}
+      ROAST_PROVIDER: ${ROAST_PROVIDER:-openai}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_ROAST_MODEL: ${OPENAI_ROAST_MODEL:-gpt-4o-mini}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      ROAST_DAILY_PER_IP_CAP: ${ROAST_DAILY_PER_IP_CAP:-30}
+      ROAST_DAILY_GLOBAL_CAP: ${ROAST_DAILY_GLOBAL_CAP:-500}
+      CORS_ORIGINS: https://${DOMAIN:?set DOMAIN}
+      FRONTEND_URL: https://${DOMAIN}
+      # The backend has no published port, so only Traefik can reach it and its
+      # X-Forwarded-For header is trustworthy (needed for per-IP rate limits).
+      FORWARDED_ALLOW_IPS: "*"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.team14-api.rule=Host(`${DOMAIN}`) && (PathPrefix(`/api`) || Path(`/health`))
+      - traefik.http.routers.team14-api.priority=100
+      - traefik.http.routers.team14-api.entrypoints=websecure
+      - traefik.http.routers.team14-api.tls.certresolver=letsencrypt
+      - traefik.http.services.team14-api.loadbalancer.server.port=8000
+
+  frontend:
+    build:
+      context: https://${GIT_AUTH:-}${GIT_REPO}.git#${GIT_REF:-main}:${GIT_SUBDIR:-}frontend
+      args:
+        VITE_API_URL: https://${DOMAIN}
+    restart: unless-stopped
+    depends_on:
+      - backend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.team14-web.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.team14-web.priority=1
+      - traefik.http.routers.team14-web.entrypoints=websecure
+      - traefik.http.routers.team14-web.tls.certresolver=letsencrypt
+      - traefik.http.services.team14-web.loadbalancer.server.port=8080
+
+volumes:
+  postgres_data:
