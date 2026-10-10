@@ -48,7 +48,7 @@ services:
         condition: service_healthy
     labels:
       - traefik.enable=true
-      - traefik.http.routers.team14-api.rule=Host(`${DOMAIN}`) && (PathPrefix(`/api`) || Path(`/health`))
+      - traefik.http.routers.team14-api.rule=Host(`${DOMAIN}`) && (PathPrefix(`/api`) || Path(`/health`) || PathPrefix(`/health/`))
       - traefik.http.routers.team14-api.priority=100
       - traefik.http.routers.team14-api.entrypoints=websecure
       - traefik.http.routers.team14-api.tls.certresolver=letsencrypt
