@@ -1,11 +1,10 @@
 # Production stack for a VPS that already runs Traefik (docker provider,
 # exposedbydefault=false, entrypoints web/websecure, cert resolver "letsencrypt").
 #
-# Images are built on the server from a Git repo, so the project needs:
-#   DOMAIN, GIT_REPO (e.g. github.com/owner/repo), GIT_REF (default main),
-#   GIT_SUBDIR (folder holding backend/ and frontend/, with a trailing slash, e.g. app/),
-#   SECRET_KEY, POSTGRES_PASSWORD, and (for roasts) OPENAI_API_KEY.
-# Public repo: leave GIT_AUTH empty. Private repo: GIT_AUTH=x-access-token:<read-only token>@
+# Hostinger's Docker Manager pulls images but never builds them, so the app images are
+# built by GitHub Actions (.github/workflows/team14-roast-images.yml) and published to GHCR.
+# The project needs: DOMAIN, SECRET_KEY, POSTGRES_PASSWORD, and (for roasts) OPENAI_API_KEY.
+# Optional: GHCR_OWNER (default boopathikumar-ui), IMAGE_TAG (default latest).
 # Nothing is published on the host: only Traefik reaches the containers.
 services:
   postgres:
@@ -24,8 +23,7 @@ services:
       retries: 10
 
   backend:
-    build:
-      context: https://${GIT_AUTH:-}${GIT_REPO:?set GIT_REPO}.git#${GIT_REF:-main}:${GIT_SUBDIR:-}backend
+    image: ghcr.io/${GHCR_OWNER:-boopathikumar-ui}/team14-roast-backend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     environment:
       DEBUG: "false"
@@ -57,10 +55,7 @@ services:
       - traefik.http.services.team14-api.loadbalancer.server.port=8000
 
   frontend:
-    build:
-      context: https://${GIT_AUTH:-}${GIT_REPO}.git#${GIT_REF:-main}:${GIT_SUBDIR:-}frontend
-      args:
-        VITE_API_URL: https://${DOMAIN}
+    image: ghcr.io/${GHCR_OWNER:-boopathikumar-ui}/team14-roast-frontend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     depends_on:
       - backend

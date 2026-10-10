@@ -1,0 +1,59 @@
+# Builds the Team14-Roast images and publishes them to GHCR.
+#
+# Lives at .github/workflows/ in the repo that hosts the app (GitHub only reads workflows
+# from the repository root); the app itself sits under team14-roast/. Hostinger's Docker
+# Manager can pull images but cannot build them, so this is how the VPS gets them.
+name: team14-roast-images
+
+on:
+  push:
+    branches: [team14-roast-deploy]
+    paths:
+      - "team14-roast/backend/**"
+      - "team14-roast/frontend/**"
+      - ".github/workflows/team14-roast-images.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  # GHCR requires a lowercase owner.
+  OWNER: boopathikumar-ui
+  # Baked into the frontend bundle at build time: the public origin of the app.
+  PUBLIC_ORIGIN: https://semypage.sbs
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./team14-roast/${{ matrix.service }}
+          push: true
+          build-args: |
+            ${{ matrix.service == 'frontend' && format('VITE_API_URL={0}', env.PUBLIC_ORIGIN) || '' }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/team14-roast-${{ matrix.service }}:latest
+            ${{ env.REGISTRY }}/${{ env.OWNER }}/team14-roast-${{ matrix.service }}:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
